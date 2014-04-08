@@ -8,7 +8,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.AnnotationProcessor')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var TypeUtil                = bugpack.require('TypeUtil');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var AnnotationProcessor     = bugpack.require('bugmeta.AnnotationProcessor');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
