@@ -11,93 +11,96 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Bug                     = bugpack.require('Bug');
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var Annotation              = bugpack.require('bugmeta.Annotation');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var MetaDecorator = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Bug                     = bugpack.require('Bug');
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
+    var Annotation              = bugpack.require('bugmeta.Annotation');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {*} reference
-     * @param {MetaContext} metaContext
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(reference, metaContext) {
+    var MetaDecorator = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugmeta.MetaDecorator",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {MetaContext}
+         * @constructs
+         * @param {*} reference
+         * @param {MetaContext} metaContext
          */
-        this.metaContext        = metaContext;
+        _constructor: function(reference, metaContext) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {MetaContext}
+             */
+            this.metaContext        = metaContext;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.reference          = reference;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @param {...}
+         * @return {*}
          */
-        this.reference          = reference;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {...}
-     * @return {*}
-     */
-    'with': function() {
-        for (var i = 0, size = arguments.length; i < size; i++) {
-            var annotation = arguments[i];
-            if (Class.doesExtend(annotation, Annotation)) {
-                annotation.setAnnotationReference(this.reference);
-                this.metaContext.addAnnotation(annotation);
-            } else {
-                throw new Bug("IllegalArgument", {}, "annotation does not extend the Annotation class");
+        'with': function() {
+            for (var i = 0, size = arguments.length; i < size; i++) {
+                var annotation = arguments[i];
+                if (Class.doesExtend(annotation, Annotation)) {
+                    annotation.setAnnotationReference(this.reference);
+                    this.metaContext.addAnnotation(annotation);
+                } else {
+                    throw new Bug("IllegalArgument", {}, "annotation does not extend the Annotation class");
+                }
             }
+
+            // NOTE BRN: Return the reference so that whatever function we're annotating is passed through and the reference
+            // is assigned correctly.
+
+            return this.reference;
         }
+    });
 
-        // NOTE BRN: Return the reference so that whatever function we're annotating is passed through and the reference
-        // is assigned correctly.
 
-        return this.reference;
-    }
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugmeta.MetaDecorator', MetaDecorator);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmeta.MetaDecorator', MetaDecorator);

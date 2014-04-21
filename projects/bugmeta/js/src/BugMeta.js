@@ -15,154 +15,162 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var Proxy                   = bugpack.require('Proxy');
-var Annotation              = bugpack.require('bugmeta.Annotation');
-var AnnotationProcessor     = bugpack.require('bugmeta.AnnotationProcessor');
-var AnnotationScan          = bugpack.require('bugmeta.AnnotationScan');
-var IAnnotationProcessor    = bugpack.require('bugmeta.IAnnotationProcessor');
-var MetaContext             = bugpack.require('bugmeta.MetaContext');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var BugMeta = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
+    var Proxy                   = bugpack.require('Proxy');
+    var Annotation              = bugpack.require('bugmeta.Annotation');
+    var AnnotationProcessor     = bugpack.require('bugmeta.AnnotationProcessor');
+    var AnnotationScan          = bugpack.require('bugmeta.AnnotationScan');
+    var IAnnotationProcessor    = bugpack.require('bugmeta.IAnnotationProcessor');
+    var MetaContext             = bugpack.require('bugmeta.MetaContext');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function() {
+    var BugMeta = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugmeta.BugMeta",
 
 
         //-------------------------------------------------------------------------------
-        // Public Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @type {function(new:Annotation)}
+         * @constructs
          */
-        this.Annotation             = Annotation;
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Public Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @type {function(new:Annotation)}
+             */
+            this.Annotation             = Annotation;
+
+            /**
+             * @type {function(new:AnnotationProcessor)}
+             */
+            this.AnnotationProcessor    = AnnotationProcessor;
+
+            /**
+             * @type {function(new:AnnotationScan)}
+             */
+            this.AnnotationScan         = AnnotationScan;
+
+            /**
+             * @type {function(new:IAnnotationProcessor)}
+             */
+            this.IAnnotationProcessor   = IAnnotationProcessor;
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {MetaContext}
+             */
+            this.metaContext            = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @type {function(new:AnnotationProcessor)}
+         * @param {string} annotationType
+         * @return {Annotation}
          */
-        this.AnnotationProcessor    = AnnotationProcessor;
+        annotation: function(annotationType) {
+            return new Annotation(annotationType);
+        },
 
         /**
-         * @type {function(new:AnnotationScan)}
+         * @return {MetaContext}
          */
-        this.AnnotationScan         = AnnotationScan;
+        context: function() {
+            if (!this.metaContext) {
+                this.metaContext = new MetaContext();
+            }
+            return this.metaContext;
+        },
 
         /**
-         * @type {function(new:IAnnotationProcessor)}
+         * @param {string} annotationType
+         * @param {function(Annotation)} processorFunction
          */
-        this.IAnnotationProcessor   = IAnnotationProcessor;
-
-        /**
-         * @private
-         * @type {MetaContext}
-         */
-        this.metaContext            = null;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} annotationType
-     * @return {Annotation}
-     */
-    annotation: function(annotationType) {
-        return new Annotation(annotationType);
-    },
-
-    /**
-     * @return {MetaContext}
-     */
-    context: function() {
-        if (!this.metaContext) {
-            this.metaContext = new MetaContext();
+        scanAllForTypeAndProcess: function(annotationType, processorFunction) {
+            var annotationProcessor = new AnnotationProcessor(processorFunction);
+            var annotationScan      = new AnnotationScan(this.context(), annotationProcessor, annotationType);
+            annotationScan.scanAll();
         }
-        return this.metaContext;
-    },
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Private Static Variables
+    //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} annotationType
-     * @param {function(Annotation)} processorFunction
+     * @static
+     * @private
+     * @type {BugMeta}
      */
-    scanAllForTypeAndProcess: function(annotationType, processorFunction) {
-        var annotationProcessor = new AnnotationProcessor(processorFunction);
-        var annotationScan      = new AnnotationScan(this.context(), annotationProcessor, annotationType);
-        annotationScan.scanAll();
-    }
+    BugMeta.instance = null;
+
+
+    //-------------------------------------------------------------------------------
+    // Public Static Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @return {BugMeta}
+     */
+    BugMeta.getInstance = function() {
+        if (BugMeta.instance === null) {
+            BugMeta.instance = new BugMeta();
+        }
+        return BugMeta.instance;
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Static Proxy
+    //-------------------------------------------------------------------------------
+
+    Proxy.proxy(BugMeta, Proxy.method(BugMeta.getInstance), [
+        "annotation",
+        "context"
+    ]);
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugmeta.BugMeta', BugMeta);
 });
-
-
-//-------------------------------------------------------------------------------
-// Private Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @private
- * @type {BugMeta}
- */
-BugMeta.instance = null;
-
-
-//-------------------------------------------------------------------------------
-// Private Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @return {BugMeta}
- */
-BugMeta.getInstance = function() {
-    if (BugMeta.instance === null) {
-        BugMeta.instance = new BugMeta();
-    }
-    return BugMeta.instance;
-};
-
-
-//-------------------------------------------------------------------------------
-// Static Proxy
-//-------------------------------------------------------------------------------
-
-Proxy.proxy(BugMeta, Proxy.method(BugMeta.getInstance), [
-    "annotation",
-    "context"
-]);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmeta.BugMeta', BugMeta);
