@@ -132,8 +132,8 @@ var parseString = function(text) {
  */
 var sortRequireAnnotationLines = function(lines) {
     lines.sort(function(a, b) {
-        var resultsA = a.match(/\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)/);
-        var resultsB = b.match(/\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)/);
+        var resultsA = a.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
+        var resultsB = b.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
 
         if (resultsA && resultsB) {
             var partsA = resultsA[2].split(".");
