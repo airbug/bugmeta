@@ -55,6 +55,7 @@ lintbug.lintTask("orderRequireAnnotations", function(lintFile, callback) {
     var lines           = fileContents.split("\n");
     sortRequireAnnotationLines(lines);
     lintFile.setFileContents(lines.join("\n"));
+    callback();
 });
 
 lintbug.lintTask("orderBugPackRequiresInFile", function(jsFilePath, callback) {
