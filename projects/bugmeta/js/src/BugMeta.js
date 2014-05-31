@@ -10,7 +10,7 @@
 //@Require('bugmeta.Annotation')
 //@Require('bugmeta.AnnotationProcessor')
 //@Require('bugmeta.AnnotationScan')
-//@Require('bugmeta.IAnnotationProcessor')
+//@Require('bugmeta.ITagProcessor')
 //@Require('bugmeta.MetaContext')
 
 
@@ -30,7 +30,7 @@ require('bugpack').context("*", function(bugpack) {
     var Annotation              = bugpack.require('bugmeta.Annotation');
     var AnnotationProcessor     = bugpack.require('bugmeta.AnnotationProcessor');
     var AnnotationScan          = bugpack.require('bugmeta.AnnotationScan');
-    var IAnnotationProcessor    = bugpack.require('bugmeta.IAnnotationProcessor');
+    var ITagProcessor    = bugpack.require('bugmeta.ITagProcessor');
     var MetaContext             = bugpack.require('bugmeta.MetaContext');
 
 
@@ -79,9 +79,9 @@ require('bugpack').context("*", function(bugpack) {
             this.AnnotationScan         = AnnotationScan;
 
             /**
-             * @type {function(new:IAnnotationProcessor)}
+             * @type {function(new:ITagProcessor)}
              */
-            this.IAnnotationProcessor   = IAnnotationProcessor;
+            this.ITagProcessor   = ITagProcessor;
 
 
             //-------------------------------------------------------------------------------

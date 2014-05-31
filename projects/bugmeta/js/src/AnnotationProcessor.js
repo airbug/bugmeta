@@ -8,7 +8,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('bugmeta.IAnnotationProcessor')
+//@Require('bugmeta.ITagProcessor')
 
 
 //-------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Obj                     = bugpack.require('Obj');
     var TypeUtil                = bugpack.require('TypeUtil');
-    var IAnnotationProcessor    = bugpack.require('bugmeta.IAnnotationProcessor');
+    var ITagProcessor    = bugpack.require('bugmeta.ITagProcessor');
 
 
     //-------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IAnnotationProcessor}
+     * @implements {ITagProcessor}
      */
     var AnnotationProcessor = Class.extend(Obj, {
 
@@ -99,7 +99,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(AnnotationProcessor, IAnnotationProcessor);
+    Class.implement(AnnotationProcessor, ITagProcessor);
 
 
     //-------------------------------------------------------------------------------

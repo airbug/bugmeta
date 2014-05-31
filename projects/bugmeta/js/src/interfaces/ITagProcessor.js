@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugmeta.IAnnotationProcessor')
+//@Export('bugmeta.ITagProcessor')
 
 //@Require('Interface')
 
@@ -27,9 +27,9 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @interface
      */
-    var IAnnotationProcessor = Interface.declare({
+    var ITagProcessor = Interface.declare({
 
-        _name: "bugmeta.IAnnotationProcessor",
+        _name: "bugmeta.ITagProcessor",
 
 
         //-------------------------------------------------------------------------------
@@ -47,5 +47,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('bugmeta.IAnnotationProcessor', IAnnotationProcessor);
+    bugpack.export('bugmeta.ITagProcessor', ITagProcessor);
 });

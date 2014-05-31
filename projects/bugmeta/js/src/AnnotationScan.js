@@ -46,7 +46,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @constructs
          * @param {MetaContext} metaContext
-         * @param {IAnnotationProcessor} processor
+         * @param {ITagProcessor} processor
          * @param {string} forType
          */
         _constructor: function(metaContext, processor, forType) {
@@ -72,7 +72,7 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {IAnnotationProcessor}
+             * @type {ITagProcessor}
              */
             this.processor      = processor;
         },
@@ -97,7 +97,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {IAnnotationProcessor}
+         * @return {ITagProcessor}
          */
         getProcessor: function() {
             return this.processor;

@@ -11,6 +11,7 @@ var buildbug            = require('buildbug');
 
 var buildProject        = buildbug.buildProject;
 var buildProperties     = buildbug.buildProperties;
+var buildScript         = buildbug.buildScript;
 var buildTarget         = buildbug.buildTarget;
 var enableModule        = buildbug.enableModule;
 var parallel            = buildbug.parallel;
@@ -26,6 +27,7 @@ var aws                 = enableModule("aws");
 var bugpack             = enableModule('bugpack');
 var bugunit             = enableModule('bugunit');
 var core                = enableModule('core');
+var lintbug             = enableModule("lintbug");
 var nodejs              = enableModule('nodejs');
 
 
@@ -33,6 +35,7 @@ var nodejs              = enableModule('nodejs');
 // Values
 //-------------------------------------------------------------------------------
 
+var name                = "bugmeta";
 var version             = "0.1.2";
 var dependencies        = {
     bugpack: "0.1.11"
@@ -46,7 +49,7 @@ var dependencies        = {
 buildProperties({
     node: {
         packageJson: {
-            name: "bugmeta",
+            name: name,
             version: version,
             description: "A JavaScript library for applying and retrieving meta information about a JS function",
             main: "./scripts/bugmeta-node-module.js",
@@ -76,7 +79,7 @@ buildProperties({
         readmePath: "./README.md",
         unitTest: {
             packageJson: {
-                name: "bugmeta-test",
+                name: name + "-test",
                 version: version,
                 main: "./scripts/bugmeta-node-module.js",
                 dependencies: dependencies,
@@ -101,6 +104,17 @@ buildProperties({
                 "./projects/bugmeta/js/test"
             ]
         }
+    },
+    lint: {
+        targetPaths: [
+            "."
+        ],
+        ignorePatterns: [
+            ".*\\.buildbug$",
+            ".*\\.bugunit$",
+            ".*\\.git$",
+            ".*node_modules$"
+        ]
     }
 });
 
@@ -123,6 +137,16 @@ buildTarget('clean').buildFlow(
 buildTarget('local').buildFlow(
     series([
         targetTask('clean'),
+        targetTask('lint', {
+            properties: {
+                targetPaths: buildProject.getProperty("lint.targetPaths"),
+                ignores: buildProject.getProperty("lint.ignorePatterns"),
+                lintTasks: [
+                    "updateCopyright",
+                    "orderRequireAnnotations"
+                ]
+            }
+        }),
         series([
             targetTask('createNodePackage', {
                 properties: {
@@ -193,6 +217,16 @@ buildTarget('local').buildFlow(
 buildTarget('prod').buildFlow(
     series([
         targetTask('clean'),
+        targetTask('lint', {
+            properties: {
+                targetPaths: buildProject.getProperty("lint.targetPaths"),
+                ignores: buildProject.getProperty("lint.ignorePatterns"),
+                lintTasks: [
+                    "updateCopyright",
+                    "orderRequireAnnotations"
+                ]
+            }
+        }),
         parallel([
 
             //Create test node bugmeta package
@@ -301,3 +335,17 @@ buildTarget('prod').buildFlow(
         ])
     ])
 );
+
+
+//-------------------------------------------------------------------------------
+// Build Scripts
+//-------------------------------------------------------------------------------
+
+buildScript({
+    dependencies: [
+        "bugcore",
+        "bugflow",
+        "bugfs"
+    ],
+    script: "./lintbug.js"
+});
