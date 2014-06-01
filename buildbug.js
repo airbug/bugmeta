@@ -152,7 +152,8 @@ buildTarget('local').buildFlow(
                     "ensureNewLineEnding",
                     "updateCopyright",
                     "orderBugpackRequires",
-                    "orderRequireAnnotations"
+                    "orderRequireAnnotations",
+                    "indentEqualSignsForPreClassVars"
                 ]
             }
         }),
@@ -236,7 +237,8 @@ buildTarget('prod').buildFlow(
                     "ensureNewLineEnding",
                     "updateCopyright",
                     "orderBugpackRequires",
-                    "orderRequireAnnotations"
+                    "orderRequireAnnotations",
+                    "indentEqualSignsForPreClassVars"
                 ]
             }
         }),

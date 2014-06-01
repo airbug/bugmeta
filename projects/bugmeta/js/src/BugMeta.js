@@ -88,7 +88,7 @@ require('bugpack').context("*", function(bugpack) {
             /**
              * @type {function(new:ITagProcessor)}
              */
-            this.ITagProcessor   = ITagProcessor;
+            this.ITagProcessor          = ITagProcessor;
 
 
             //-------------------------------------------------------------------------------

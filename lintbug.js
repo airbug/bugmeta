@@ -48,6 +48,15 @@ lintbug.lintTask("ensureNewLineEnding", function(lintFile, callback) {
     callback();
 });
 
+lintbug.lintTask("indentEqualSignsForPreClassVars", function(lintFile, callback) {
+    var fileContents    = lintFile.getFileContents();
+    var lines           = fileContents.split("\n");
+    var startIndex      = 0;
+
+    lintFile.setFileContents(fileContents);
+    callback();
+});
+
 lintbug.lintTask("orderBugpackRequires", function(lintFile, callback) {
     var fileContents    = lintFile.getFileContents();
     fileContents = sortBugpackRequires(fileContents);
