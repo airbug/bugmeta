@@ -151,6 +151,7 @@ buildTarget('local').buildFlow(
                 lintTasks: [
                     "ensureNewLineEnding",
                     "updateCopyright",
+                    "orderBugpackRequires",
                     "orderRequireAnnotations"
                 ]
             }
@@ -234,6 +235,7 @@ buildTarget('prod').buildFlow(
                 lintTasks: [
                     "ensureNewLineEnding",
                     "updateCopyright",
+                    "orderBugpackRequires",
                     "orderRequireAnnotations"
                 ]
             }
