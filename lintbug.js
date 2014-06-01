@@ -49,7 +49,10 @@ lintbug.lintTask("ensureNewLineEnding", function(lintFile, callback) {
 });
 
 lintbug.lintTask("orderBugpackRequires", function(lintFile, callback) {
-    //var Class                   = bugpack.require('Class');
+    var fileContents    = lintFile.getFileContents();
+    fileContents = sortBugpackRequires(fileContents);
+    lintFile.setFileContents(fileContents);
+    callback();
 });
 
 lintbug.lintTask("orderRequireAnnotations", function(lintFile, callback) {
@@ -77,8 +80,21 @@ lintbug.lintTask("updateCopyright", function(lintFile, callback) {
 // Helper Methods
 //-------------------------------------------------------------------------------
 
-var copyright = null;
+/**
+ * @private
+ * @param {string} fileContents
+ * @returns {Array.<{index: number, line: string}>}
+ */
+var generateLines = function(fileContents) {
+    return bugcore.StringUtil.split(fileContents, "\n", function(line, index) {
+        return {
+            index: index,
+            line: line
+        };
+    });
+};
 
+var copyright = null;
 /**
  * @private
  * @return {string}
@@ -103,38 +119,21 @@ var getCopyright = function() {
 
 /**
  * @private
- * @param {string} argumentsString
- * @return {Array.<(string|number)>}
- */
-var parseArguments = function(argumentsString) {
-    var args = [];
-    var parts = argumentsString.split(',');
-    parts.forEach(function(part) {
-        var results = part.match(/\s*('|")(.*?)\1\s*/);
-        if (results) {
-            args.push(results[2]);
-        } else {
-            var num = parseFloat(part);
-            if (isNaN(num)) {
-                throw new Error("Could not parse parameter '" + part + "'");
-            }
-            args.push(num);
-        }
-    });
-    return args;
-};
-
-/**
- * @private
- * @param {string} text
+ * @param {Array.<{index: number, line: string}>} lines
  * @return {string}
  */
-var parseString = function(text) {
-    var results = text.match(/\s*('|")(.*?)\1\s*/);
-    if (results) {
-        return results[2];
-    }
-    return null;
+var mergeLines = function(lines) {
+    var result = "";
+    var first = true;
+    lines.forEach(function(line) {
+        if (first) {
+            result += line.line;
+            first = false;
+        } else {
+            result += "\n" + line.line;
+        }
+    });
+    return result;
 };
 
 /**
@@ -143,12 +142,7 @@ var parseString = function(text) {
  * @return {string}
  */
 var sortRequireAnnotations = function(fileContents) {
-    var lines   = bugcore.StringUtil.split(fileContents, "\n", function(line, index) {
-        return {
-            index: index,
-            line: line
-        };
-    });
+    var lines   = generateLines(fileContents);
     lines.sort(function(a, b) {
         var resultsA = a.line.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
         var resultsB = b.line.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
@@ -178,15 +172,44 @@ var sortRequireAnnotations = function(fileContents) {
         }
         return 1;
     });
-    var result = "";
-    var first = true;
-    lines.forEach(function(line) {
-        if (first) {
-            result += line.line;
-            first = false;
-        } else {
-            result += "\n" + line.line;
+    return mergeLines(lines);
+};
+
+/**
+ * @private
+ * @param {string} fileContents
+ * @return {string}
+ */
+var sortBugpackRequires = function(fileContents) {
+    var lines   = generateLines(fileContents);
+    lines.sort(function(a, b) {
+        var resultsA = a.line.match(/^\s*var \w+\s+=\s+bugpack\.require\(('|")((?:\w|\.)*)\1\);\s*$/);
+        var resultsB = b.line.match(/^\s*var \w+\s+=\s+bugpack\.require\(('|")((?:\w|\.)*)\1\);\s*$/);
+
+        if (resultsA && resultsB) {
+            var partsA = resultsA[2].split(".");
+            var partsB = resultsB[2].split(".");
+            var classNameA = partsA.pop();
+            var classNameB = partsB.pop();
+            var packageNameA = partsA.join(".");
+            var packageNameB = partsB.join(".");
+            if (packageNameA < packageNameB) {
+                return -1;
+            }
+            if (packageNameA > packageNameB) {
+                return 1;
+            }
+            if (classNameA < classNameB) {
+                return -1;
+            }
+            if (classNameA > classNameB) {
+                return 1;
+            }
         }
+        if (a.index < b.index) {
+            return -1;
+        }
+        return 1;
     });
-    return result;
+    return mergeLines(lines);
 };

@@ -37,8 +37,8 @@ require('bugpack').context("*", function(bugpack) {
     var Annotation              = bugpack.require('bugmeta.Annotation');
     var AnnotationProcessor     = bugpack.require('bugmeta.AnnotationProcessor');
     var AnnotationScan          = bugpack.require('bugmeta.AnnotationScan');
-    var ITagProcessor    = bugpack.require('bugmeta.ITagProcessor');
     var MetaContext             = bugpack.require('bugmeta.MetaContext');
+    var ITagProcessor    = bugpack.require('bugmeta.ITagProcessor');
 
 
     //-------------------------------------------------------------------------------
