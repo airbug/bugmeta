@@ -173,6 +173,7 @@ var sortRequireAnnotations = function(fileContents) {
     lines.forEach(function(line) {
         if (first) {
             result += line.line;
+            first = false;
         } else {
             result += "\n" + line.line;
         }
