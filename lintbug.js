@@ -36,7 +36,29 @@ var lintbug             = enableModule("lintbug");
 // Lint Tasks
 //-------------------------------------------------------------------------------
 
-//NOTE BRN: This only works for JS files
+lintbug.lintTask("ensureNewLineEnding", function(lintFile, callback) {
+    var fileContents    = lintFile.getFileContents();
+    var lines           = fileContents.split("\n");
+    var lastLine        = lines.pop();
+    lines.push(lastLine);
+    if (lastLine !== "") {
+        lines.push("");
+    }
+    lintFile.setFileContents(lines.join("\n"));
+    callback();
+});
+
+lintbug.lintTask("orderBugpackRequires", function(lintFile, callback) {
+    //var Class                   = bugpack.require('Class');
+});
+
+lintbug.lintTask("orderRequireAnnotations", function(lintFile, callback) {
+    var fileContents    = lintFile.getFileContents();
+    fileContents = sortRequireAnnotations(fileContents);
+    lintFile.setFileContents(fileContents);
+    callback();
+});
+
 lintbug.lintTask("updateCopyright", function(lintFile, callback) {
     var fileContents    = lintFile.getFileContents();
     var copyright       = getCopyright();
@@ -48,17 +70,6 @@ lintbug.lintTask("updateCopyright", function(lintFile, callback) {
     }
     lintFile.setFileContents(fileContents);
     callback();
-});
-
-lintbug.lintTask("orderRequireAnnotations", function(lintFile, callback) {
-    var fileContents    = lintFile.getFileContents();
-    fileContents = sortRequireAnnotations(fileContents);
-    lintFile.setFileContents(fileContents);
-    callback();
-});
-
-lintbug.lintTask("orderBugPackRequiresInFile", function(jsFilePath, callback) {
-    //var Class                   = bugpack.require('Class');
 });
 
 

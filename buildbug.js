@@ -149,6 +149,7 @@ buildTarget('local').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "ensureNewLineEnding",
                     "updateCopyright",
                     "orderRequireAnnotations"
                 ]
@@ -231,6 +232,7 @@ buildTarget('prod').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "ensureNewLineEnding",
                     "updateCopyright",
                     "orderRequireAnnotations"
                 ]
