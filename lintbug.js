@@ -53,7 +53,7 @@ lintbug.lintTask("indentEqualSignsForPreClassVars", function(lintFile, callback)
     var fileContents    = lintFile.getFileContents();
     var lines           = fileContents.split("\n");
     var startIndex      = bugcore.ArrayUtil.indexOf(lines, /^\s*\/\/ Context\s*$/);
-    var endIndex        = bugcore.ArrayUtil.indexOf(lines, /^\s*\/\/ Declare Class\s*$/);
+    var endIndex        = bugcore.ArrayUtil.indexOf(lines, /^\s*\/\/ (Declare Class|Declare Interface)\s*$/);
     var varRegex        = /^(\s*)var (\w+)\s*=(.*)$/;
     var varObjects      = [];
     var longestIndent   = 0;
@@ -72,7 +72,7 @@ lintbug.lintTask("indentEqualSignsForPreClassVars", function(lintFile, callback)
                 });
 
                 //NOTE BRN: Add 2 at the end so that we are at least two spaces away from the variable name
-                var indentLength = Math.ceil((indent + ("var ").length + varName.length + 2) / indentSpacing);
+                var indentLength = Math.ceil((indent.length + ("var ").length + varName.length + 2) / indentSpacing);
                 if (indentLength > longestIndent) {
                     longestIndent = indentLength;
                 }
