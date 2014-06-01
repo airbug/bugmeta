@@ -52,9 +52,8 @@ lintbug.lintTask("updateCopyright", function(lintFile, callback) {
 
 lintbug.lintTask("orderRequireAnnotations", function(lintFile, callback) {
     var fileContents    = lintFile.getFileContents();
-    var lines           = fileContents.split("\n");
-    sortRequireAnnotationLines(lines);
-    lintFile.setFileContents(lines.join("\n"));
+    fileContents = sortRequireAnnotations(fileContents);
+    lintFile.setFileContents(fileContents);
     callback();
 });
 
@@ -129,12 +128,19 @@ var parseString = function(text) {
 
 /**
  * @private
- * @param {Array.<string>} lines
+ * @param {string} fileContents
+ * @return {string}
  */
-var sortRequireAnnotationLines = function(lines) {
+var sortRequireAnnotations = function(fileContents) {
+    var lines   = bugcore.StringUtil.split(fileContents, "\n", function(line, index) {
+        return {
+            index: index,
+            line: line
+        };
+    });
     lines.sort(function(a, b) {
-        var resultsA = a.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
-        var resultsB = b.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
+        var resultsA = a.line.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
+        var resultsB = b.line.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
 
         if (resultsA && resultsB) {
             var partsA = resultsA[2].split(".");
@@ -155,7 +161,21 @@ var sortRequireAnnotationLines = function(lines) {
             if (classNameB > classNameA) {
                 return 1;
             }
+        } else {
+            if (a.index < b.index) {
+                return -1;
+            }
+            return 1;
         }
-        return 0;
     });
+    var result = "";
+    var first = true;
+    lines.forEach(function(line) {
+        if (first) {
+            result += line.line;
+        } else {
+            result += "\n" + line.line;
+        }
+    });
+    return result;
 };
