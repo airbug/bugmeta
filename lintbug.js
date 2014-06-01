@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014 airbug inc. http://airbug.com
  *
- * bugcore may be freely distributed under the MIT license.
+ * bugmeta may be freely distributed under the MIT license.
  */
 
 
@@ -158,15 +158,14 @@ var sortRequireAnnotations = function(fileContents) {
             if (classNameA < classNameB) {
                 return -1;
             }
-            if (classNameB > classNameA) {
+            if (classNameA > classNameB) {
                 return 1;
             }
-        } else {
-            if (a.index < b.index) {
-                return -1;
-            }
-            return 1;
         }
+        if (a.index < b.index) {
+            return -1;
+        }
+        return 1;
     });
     var result = "";
     var first = true;
