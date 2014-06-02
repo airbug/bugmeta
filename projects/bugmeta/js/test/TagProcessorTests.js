@@ -13,8 +13,8 @@
 
 //@Require('TypeUtil')
 //@Require('bugdouble.BugDouble')
-//@Require('bugmeta.TagProcessor')
 //@Require('bugmeta.BugMeta')
+//@Require('bugmeta.TagProcessor')
 //@Require('bugunit.TestTag')
 
 
@@ -28,20 +28,20 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var TypeUtil                = bugpack.require('TypeUtil');
-    var BugDouble               = bugpack.require('bugdouble.BugDouble');
-    var TagProcessor     = bugpack.require('bugmeta.TagProcessor');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
+    var TypeUtil        = bugpack.require('TypeUtil');
+    var BugDouble       = bugpack.require('bugdouble.BugDouble');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var TagProcessor    = bugpack.require('bugmeta.TagProcessor');
+    var TestTag         = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var spyOnFunction           = BugDouble.spyOnFunction;
-    var test                    = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var spyOnFunction   = BugDouble.spyOnFunction;
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------

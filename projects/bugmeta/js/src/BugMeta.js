@@ -14,11 +14,11 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Proxy')
+//@Require('bugmeta.ITagProcessor')
+//@Require('bugmeta.MetaContext')
 //@Require('bugmeta.Tag')
 //@Require('bugmeta.TagProcessor')
 //@Require('bugmeta.TagScan')
-//@Require('bugmeta.ITagProcessor')
-//@Require('bugmeta.MetaContext')
 
 
 //-------------------------------------------------------------------------------
@@ -31,14 +31,14 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var Obj                     = bugpack.require('Obj');
-    var Proxy                   = bugpack.require('Proxy');
-    var Tag              = bugpack.require('bugmeta.Tag');
-    var TagProcessor     = bugpack.require('bugmeta.TagProcessor');
-    var TagScan          = bugpack.require('bugmeta.TagScan');
-    var ITagProcessor           = bugpack.require('bugmeta.ITagProcessor');
-    var MetaContext             = bugpack.require('bugmeta.MetaContext');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var Proxy           = bugpack.require('Proxy');
+    var ITagProcessor   = bugpack.require('bugmeta.ITagProcessor');
+    var MetaContext     = bugpack.require('bugmeta.MetaContext');
+    var Tag             = bugpack.require('bugmeta.Tag');
+    var TagProcessor    = bugpack.require('bugmeta.TagProcessor');
+    var TagScan         = bugpack.require('bugmeta.TagScan');
 
 
     //-------------------------------------------------------------------------------
