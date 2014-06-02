@@ -9,10 +9,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugmeta.Annotation')
+//@Export('bugmeta.TagProcessor')
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
+//@Require('bugmeta.ITagProcessor')
 
 
 //-------------------------------------------------------------------------------
@@ -25,8 +28,11 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class   = bugpack.require('Class');
-    var Obj     = bugpack.require('Obj');
+    var Bug             = bugpack.require('Bug');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var TypeUtil        = bugpack.require('TypeUtil');
+    var ITagProcessor   = bugpack.require('bugmeta.ITagProcessor');
 
 
     //-------------------------------------------------------------------------------
@@ -36,10 +42,11 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
+     * @implements {ITagProcessor}
      */
-    var Annotation = Class.extend(Obj, {
+    var TagProcessor = Class.extend(Obj, {
 
-        _name: "bugmeta.Annotation",
+        _name: "bugmeta.TagProcessor",
 
 
         //-------------------------------------------------------------------------------
@@ -48,9 +55,9 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {string} annotationType
+         * @param {function(Tag)} tagProcessorFunction
          */
-        _constructor: function(annotationType) {
+        _constructor: function(tagProcessorFunction) {
 
             this._super();
 
@@ -59,17 +66,14 @@ require('bugpack').context("*", function(bugpack) {
             // Private Properties
             //-------------------------------------------------------------------------------
 
+            if (!TypeUtil.isFunction(tagProcessorFunction)) {
+                throw new Bug("IllegalArgument", {}, "tagProcessorFunction must be a function");
+            }
             /**
              * @private
-             * @type {*}
+             * @type {function(Tag)}
              */
-            this.annotationReference    = null;
-
-            /**
-             * @private
-             * @type {string}
-             */
-            this.annotationType         = annotationType;
+            this.tagProcessorFunction = tagProcessorFunction;
         },
 
 
@@ -78,45 +82,36 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {*}
+         * @return {function(Tag)}
          */
-        getAnnotationReference: function() {
-            return this.annotationReference;
+        getTagProcessorFunction: function() {
+            return this.tagProcessorFunction;
         },
 
-        /**
-         * @param {*} annotationReference
-         */
-        setAnnotationReference: function(annotationReference) {
-            this.annotationReference = annotationReference;
-        },
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @return {string}
+         * @param {Tag} tag
          */
-        getAnnotationType: function() {
-            return this.annotationType;
+        process: function(tag) {
+            this.tagProcessorFunction.call(null, tag);
         }
     });
 
 
     //-------------------------------------------------------------------------------
-    // Static Methods
+    // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    /**
-     * @static
-     * @param {string} annotationType
-     * @return {Annotation}
-     */
-    Annotation.annotation = function(annotationType) {
-        return new Annotation(annotationType);
-    };
+    Class.implement(TagProcessor, ITagProcessor);
 
 
     //-------------------------------------------------------------------------------
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('bugmeta.Annotation', Annotation);
+    bugpack.export('bugmeta.TagProcessor', TagProcessor);
 });

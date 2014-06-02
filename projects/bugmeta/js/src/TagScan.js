@@ -9,7 +9,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugmeta.AnnotationScan')
+//@Export('bugmeta.TagScan')
 
 //@Require('Class')
 //@Require('Obj')
@@ -41,9 +41,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {Obj}
      */
-    var AnnotationScan = Class.extend(Obj, {
+    var TagScan = Class.extend(Obj, {
 
-        _name: "bugmeta.AnnotationScan",
+        _name: "bugmeta.TagScan",
 
 
         //-------------------------------------------------------------------------------
@@ -53,10 +53,10 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @constructs
          * @param {MetaContext} metaContext
-         * @param {ITagProcessor} processor
+         * @param {ITagProcessor} tagProcessor
          * @param {string} forType
          */
-        _constructor: function(metaContext, processor, forType) {
+        _constructor: function(metaContext, tagProcessor, forType) {
 
             this._super();
 
@@ -81,7 +81,7 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {ITagProcessor}
              */
-            this.processor      = processor;
+            this.tagProcessor   = tagProcessor;
         },
 
 
@@ -106,8 +106,8 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @return {ITagProcessor}
          */
-        getProcessor: function() {
-            return this.processor;
+        getTagProcessor: function() {
+            return this.tagProcessor;
         },
 
 
@@ -123,7 +123,7 @@ require('bugpack').context("*", function(bugpack) {
         scanAll: function(scanOptions) {
             var _this           = this;
             var excludeSet      = new Set();
-            var annotations     = this.metaContext.getAnnotationsByType(this.forType);
+            var tags     = this.metaContext.getTagsByType(this.forType);
             if (scanOptions && scanOptions.excludes) {
                 scanOptions.excludes.forEach(function(exclude) {
                     if (TypeUtil.isString(exclude)) {
@@ -133,10 +133,10 @@ require('bugpack').context("*", function(bugpack) {
                     }
                 });
             }
-            if (annotations) {
-                annotations.forEach(function(annotation) {
-                    if (!excludeSet.contains(annotation.getAnnotationReference())) {
-                        _this.processor.process(annotation);
+            if (tags) {
+                tags.forEach(function(tag) {
+                    if (!excludeSet.contains(tag.getTagReference())) {
+                        _this.tagProcessor.process(tag);
                     }
                 });
             }
@@ -147,11 +147,11 @@ require('bugpack').context("*", function(bugpack) {
          */
         scanClass: function(_class) {
             var _this       = this;
-            var annotations = this.metaContext.getAnnotationsByReference(_class);
-            if (annotations) {
-                annotations.forEach(function(annotation) {
-                    if (annotation.getAnnotationType() === _this.forType) {
-                        _this.processor.process(annotation);
+            var tags = this.metaContext.getTagsByReference(_class);
+            if (tags) {
+                tags.forEach(function(tag) {
+                    if (tag.getTagType() === _this.forType) {
+                        _this.tagProcessor.process(tag);
                     }
                 });
             }
@@ -191,5 +191,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('bugmeta.AnnotationScan', AnnotationScan);
+    bugpack.export('bugmeta.TagScan', TagScan);
 });

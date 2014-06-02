@@ -12,10 +12,10 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('bugmeta.Annotation')
+//@Require('bugmeta.Tag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugmeta.MetaContext')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -29,10 +29,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
-    var Annotation              = bugpack.require('bugmeta.Annotation');
+    var Tag              = bugpack.require('bugmeta.Tag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var MetaContext             = bugpack.require('bugmeta.MetaContext');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(bugMetaContextTest).with(
+    bugmeta.tag(bugMetaContextTest).with(
         test().name("BugMeta - #context Test")
     );
 });

@@ -13,9 +13,9 @@
 
 //@Require('TypeUtil')
 //@Require('bugdouble.BugDouble')
-//@Require('bugmeta.AnnotationProcessor')
+//@Require('bugmeta.TagProcessor')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -30,9 +30,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var TypeUtil                = bugpack.require('TypeUtil');
     var BugDouble               = bugpack.require('bugdouble.BugDouble');
-    var AnnotationProcessor     = bugpack.require('bugmeta.AnnotationProcessor');
+    var TagProcessor     = bugpack.require('bugmeta.TagProcessor');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -41,22 +41,22 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var spyOnFunction           = BugDouble.spyOnFunction;
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
     // Declare Tests
     //-------------------------------------------------------------------------------
 
-    var annotationProcessorInstantiationTest = {
+    var tagProcessorInstantiationTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.testProcessorFunction      = function(annotation) {};
-            this.testAnnotationProcessor    = new AnnotationProcessor(this.testProcessorFunction);
+            this.testProcessorFunction      = function(tag) {};
+            this.testTagProcessor    = new TagProcessor(this.testProcessorFunction);
         },
 
         //-------------------------------------------------------------------------------
@@ -64,12 +64,12 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            test.assertEqual(this.testAnnotationProcessor.getProcessorFunction(), this.testProcessorFunction,
-                "Assert #getProcessorFunction returns testProcessorFunction");
+            test.assertEqual(this.testTagProcessor.getTagProcessorFunction(), this.testProcessorFunction,
+                "Assert #getTagProcessorFunction returns testProcessorFunction");
         }
     };
 
-    var annotationProcessorInstantiationMissingProcessorFunctionTest = {
+    var tagProcessorInstantiationMissingProcessorFunctionTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
@@ -86,12 +86,12 @@ require('bugpack').context("*", function(bugpack) {
         test: function(test) {
             var _this = this;
             test.assertThrows(function() {
-                var annotationProcessor = new AnnotationProcessor();
-            }, "Assert instantiating an AnnotationProcessor without processorFunction parameter throws an Error");
+                var tagProcessor = new TagProcessor();
+            }, "Assert instantiating an TagProcessor without processorFunction parameter throws an Error");
         }
     };
 
-    var annotationProcessorProcessAnnotationTest = {
+    var tagProcessorProcessTagTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
@@ -99,13 +99,13 @@ require('bugpack').context("*", function(bugpack) {
 
         setup: function(test) {
             var _this                       = this;
-            this.testAnnotation             = {};
-            this.testProcessorFunction      = function(annotation) {
-                test.assertEqual(annotation, _this.testAnnotation,
-                    "Assert annotation received in processorFunction is testAnnotation");
+            this.testTag             = {};
+            this.testProcessorFunction      = function(tag) {
+                test.assertEqual(tag, _this.testTag,
+                    "Assert tag received in processorFunction is testTag");
             };
             this.testProcessorFunctionSpy   = spyOnFunction(this.testProcessorFunction);
-            this.testAnnotationProcessor    = new AnnotationProcessor(this.testProcessorFunctionSpy);
+            this.testTagProcessor    = new TagProcessor(this.testProcessorFunctionSpy);
         },
 
         //-------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            this.testAnnotationProcessor.process(this.testAnnotation);
+            this.testTagProcessor.process(this.testTag);
             test.assertTrue(this.testProcessorFunctionSpy.wasCalled(),
                 "Assert processorFunction was called");
         }
@@ -124,13 +124,13 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(annotationProcessorInstantiationTest).with(
-        test().name("AnnotationProcessor - instantiation Test")
+    bugmeta.tag(tagProcessorInstantiationTest).with(
+        test().name("TagProcessor - instantiation Test")
     );
-    bugmeta.annotate(annotationProcessorInstantiationMissingProcessorFunctionTest).with(
-        test().name("AnnotationProcessor - instantiation missing processorFunction Test")
+    bugmeta.tag(tagProcessorInstantiationMissingProcessorFunctionTest).with(
+        test().name("TagProcessor - instantiation missing processorFunction Test")
     );
-    bugmeta.annotate(annotationProcessorProcessAnnotationTest).with(
-        test().name("AnnotationProcessor - #processAnnotation Test")
+    bugmeta.tag(tagProcessorProcessTagTest).with(
+        test().name("TagProcessor - #processTag Test")
     );
 });

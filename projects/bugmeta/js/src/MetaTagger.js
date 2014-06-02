@@ -9,13 +9,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugmeta.AnnotationProcessor')
+//@Export('bugmeta.MetaTagger')
 
 //@Require('Bug')
 //@Require('Class')
 //@Require('Obj')
-//@Require('TypeUtil')
-//@Require('bugmeta.ITagProcessor')
+//@Require('bugmeta.Tag')
 
 
 //-------------------------------------------------------------------------------
@@ -28,11 +27,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug             = bugpack.require('Bug');
-    var Class           = bugpack.require('Class');
-    var Obj             = bugpack.require('Obj');
-    var TypeUtil        = bugpack.require('TypeUtil');
-    var ITagProcessor   = bugpack.require('bugmeta.ITagProcessor');
+    var Bug         = bugpack.require('Bug');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var Tag  = bugpack.require('bugmeta.Tag');
 
 
     //-------------------------------------------------------------------------------
@@ -42,11 +40,10 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {ITagProcessor}
      */
-    var AnnotationProcessor = Class.extend(Obj, {
+    var MetaTagger = Class.extend(Obj, {
 
-        _name: "bugmeta.AnnotationProcessor",
+        _name: "bugmeta.MetaTagger",
 
 
         //-------------------------------------------------------------------------------
@@ -55,9 +52,10 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {function(Annotation)} processorFunction
+         * @param {*} reference
+         * @param {MetaContext} metaContext
          */
-        _constructor: function(processorFunction) {
+        _constructor: function(reference, metaContext) {
 
             this._super();
 
@@ -66,26 +64,17 @@ require('bugpack').context("*", function(bugpack) {
             // Private Properties
             //-------------------------------------------------------------------------------
 
-            if (!TypeUtil.isFunction(processorFunction)) {
-                throw new Bug("IllegalArgument", {}, "processorFunction must be a function");
-            }
             /**
              * @private
-             * @type {function(Annotation)}
+             * @type {MetaContext}
              */
-            this.processorFunction = processorFunction;
-        },
+            this.metaContext        = metaContext;
 
-
-        //-------------------------------------------------------------------------------
-        // Getters and Setters
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @return {function(Annotation)}
-         */
-        getProcessorFunction: function() {
-            return this.processorFunction;
+            /**
+             * @private
+             * @type {*}
+             */
+            this.reference          = reference;
         },
 
 
@@ -94,24 +83,31 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {Annotation} annotation
+         * @param {...}
+         * @return {*}
          */
-        process: function(annotation) {
-            this.processorFunction.call(null, annotation);
+        'with': function() {
+            for (var i = 0, size = arguments.length; i < size; i++) {
+                var tag = arguments[i];
+                if (Class.doesExtend(tag, Tag)) {
+                    tag.setTagReference(this.reference);
+                    this.metaContext.addTag(tag);
+                } else {
+                    throw new Bug("IllegalArgument", {}, "tag does not extend the Tag class");
+                }
+            }
+
+            // NOTE BRN: Return the reference so that whatever function we're annotating is passed through and the reference
+            // is assigned correctly.
+
+            return this.reference;
         }
     });
-
-
-    //-------------------------------------------------------------------------------
-    // Implement Interfaces
-    //-------------------------------------------------------------------------------
-
-    Class.implement(AnnotationProcessor, ITagProcessor);
 
 
     //-------------------------------------------------------------------------------
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('bugmeta.AnnotationProcessor', AnnotationProcessor);
+    bugpack.export('bugmeta.MetaTagger', MetaTagger);
 });

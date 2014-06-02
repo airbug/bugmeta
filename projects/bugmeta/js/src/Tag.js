@@ -9,12 +9,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugmeta.MetaDecorator')
+//@Export('bugmeta.Tag')
 
-//@Require('Bug')
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugmeta.Annotation')
 
 
 //-------------------------------------------------------------------------------
@@ -27,10 +25,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug         = bugpack.require('Bug');
-    var Class       = bugpack.require('Class');
-    var Obj         = bugpack.require('Obj');
-    var Annotation  = bugpack.require('bugmeta.Annotation');
+    var Class   = bugpack.require('Class');
+    var Obj     = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------
@@ -41,9 +37,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {Obj}
      */
-    var MetaDecorator = Class.extend(Obj, {
+    var Tag = Class.extend(Obj, {
 
-        _name: "bugmeta.MetaDecorator",
+        _name: "bugmeta.Tag",
 
 
         //-------------------------------------------------------------------------------
@@ -52,10 +48,9 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {*} reference
-         * @param {MetaContext} metaContext
+         * @param {string} tagType
          */
-        _constructor: function(reference, metaContext) {
+        _constructor: function(tagType) {
 
             this._super();
 
@@ -66,48 +61,62 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {MetaContext}
+             * @type {*}
              */
-            this.metaContext        = metaContext;
+            this.tagReference    = null;
 
             /**
              * @private
-             * @type {*}
+             * @type {string}
              */
-            this.reference          = reference;
+            this.tagType         = tagType;
         },
 
 
         //-------------------------------------------------------------------------------
-        // Public Methods
+        // Getters and Setters
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {...}
          * @return {*}
          */
-        'with': function() {
-            for (var i = 0, size = arguments.length; i < size; i++) {
-                var annotation = arguments[i];
-                if (Class.doesExtend(annotation, Annotation)) {
-                    annotation.setAnnotationReference(this.reference);
-                    this.metaContext.addAnnotation(annotation);
-                } else {
-                    throw new Bug("IllegalArgument", {}, "annotation does not extend the Annotation class");
-                }
-            }
+        getTagReference: function() {
+            return this.tagReference;
+        },
 
-            // NOTE BRN: Return the reference so that whatever function we're annotating is passed through and the reference
-            // is assigned correctly.
+        /**
+         * @param {*} tagReference
+         */
+        setTagReference: function(tagReference) {
+            this.tagReference = tagReference;
+        },
 
-            return this.reference;
+        /**
+         * @return {string}
+         */
+        getTagType: function() {
+            return this.tagType;
         }
     });
+
+
+    //-------------------------------------------------------------------------------
+    // Static Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @param {string} tagType
+     * @return {Tag}
+     */
+    Tag.tag = function(tagType) {
+        return new Tag(tagType);
+    };
 
 
     //-------------------------------------------------------------------------------
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('bugmeta.MetaDecorator', MetaDecorator);
+    bugpack.export('bugmeta.Tag', Tag);
 });

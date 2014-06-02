@@ -12,9 +12,9 @@
 //@TestFile
 
 //@Require('TypeUtil')
-//@Require('bugmeta.Annotation')
+//@Require('bugmeta.Tag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -28,9 +28,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var TypeUtil                = bugpack.require('TypeUtil');
-    var Annotation              = bugpack.require('bugmeta.Annotation');
+    var Tag              = bugpack.require('bugmeta.Tag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -38,22 +38,22 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
     // Declare Tests
     //-------------------------------------------------------------------------------
 
-    var annotationInstantiationTest = {
+    var tagInstantiationTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.testAnnotationType     = "testAnnotationType";
-            this.testAnnotation         = new Annotation(this.testAnnotationType);
+            this.testTagType     = "testTagType";
+            this.testTag         = new Tag(this.testTagType);
         },
 
         //-------------------------------------------------------------------------------
@@ -61,23 +61,23 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            test.assertEqual(this.testAnnotation.getAnnotationType(), this.testAnnotationType,
-                "Assert #getAnnotationType returns 'testAnnotationType'");
-            test.assertTrue(TypeUtil.isNull(this.testAnnotation.getAnnotationReference()),
-                "Assert #getAnnotationReference returns null");
+            test.assertEqual(this.testTag.getTagType(), this.testTagType,
+                "Assert #getTagType returns 'testTagType'");
+            test.assertTrue(TypeUtil.isNull(this.testTag.getTagReference()),
+                "Assert #getTagReference returns null");
         }
     };
 
-    var annotationSetAnnotationReferenceTest = {
+    var tagSetTagReferenceTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.testAnnotationType         = "testAnnotationType";
-            this.testAnnotationReference    = {};
-            this.testAnnotation             = new Annotation(this.testAnnotationType);
+            this.testTagType         = "testTagType";
+            this.testTagReference    = {};
+            this.testTag             = new Tag(this.testTagType);
         },
 
         //-------------------------------------------------------------------------------
@@ -85,9 +85,9 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            this.testAnnotation.setAnnotationReference(this.testAnnotationReference);
-            test.assertEqual(this.testAnnotation.getAnnotationReference(), this.testAnnotationReference,
-                "Assert #getAnnotationReference returns 'testAnnotationReference'");
+            this.testTag.setTagReference(this.testTagReference);
+            test.assertEqual(this.testTag.getTagReference(), this.testTagReference,
+                "Assert #getTagReference returns 'testTagReference'");
         }
     };
 
@@ -96,10 +96,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(annotationInstantiationTest).with(
-        test().name("Annotation - instantiation Test")
+    bugmeta.tag(tagInstantiationTest).with(
+        test().name("Tag - instantiation Test")
     );
-    bugmeta.annotate(annotationSetAnnotationReferenceTest).with(
-        test().name("Annotation - #setAnnotationReference Test")
+    bugmeta.tag(tagSetTagReferenceTest).with(
+        test().name("Tag - #setTagReference Test")
     );
 });

@@ -13,10 +13,10 @@
 
 //@Require('Class')
 //@Require('TypeUtil')
-//@Require('bugmeta.Annotation')
+//@Require('bugmeta.Tag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugmeta.MetaContext')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -31,10 +31,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var TypeUtil                = bugpack.require('TypeUtil');
-    var Annotation              = bugpack.require('bugmeta.Annotation');
+    var Tag              = bugpack.require('bugmeta.Tag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var MetaContext             = bugpack.require('bugmeta.MetaContext');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -66,28 +66,28 @@ require('bugpack').context("*", function(bugpack) {
         test: function(test) {
             test.assertTrue(Class.doesExtend(this.testMetaContext, MetaContext),
                 "Assert that testMetaContext is an instance of MetaContext");
-            test.assertTrue(this.testMetaContext.getAnnotationMap().isEmpty(),
-                "Assert annotationMap starts empty");
-            test.assertTrue(this.testMetaContext.getAnnotationProcessorMap().isEmpty(),
-                "Assert annotationProcessorMap starts empty");
-            test.assertTrue(this.testMetaContext.getReferenceToAnnotationListMap().isEmpty(),
-                "Assert referenceToAnnotationListMap starts empty");
+            test.assertTrue(this.testMetaContext.getTagMap().isEmpty(),
+                "Assert tagMap starts empty");
+            test.assertTrue(this.testMetaContext.getTagProcessorMap().isEmpty(),
+                "Assert tagProcessorMap starts empty");
+            test.assertTrue(this.testMetaContext.getReferenceToTagListMap().isEmpty(),
+                "Assert referenceToTagListMap starts empty");
         }
     };
 
-    var metaContextAddAnnotationTest = {
+    var metaContextAddTagTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.testAnnotationType         = "testAnnotationType";
-            this.testAnnotationReference    = Class.declare({});
-            this.testAnnotation             = new Annotation(this.testAnnotationType);
-            this.testAnnotation.setAnnotationReference(this.testAnnotationReference);
+            this.testTagType         = "testTagType";
+            this.testTagReference    = Class.declare({});
+            this.testTag             = new Tag(this.testTagType);
+            this.testTag.setTagReference(this.testTagReference);
             this.testMetaContext            = new MetaContext();
-            this.testMetaContext.addAnnotation(this.testAnnotation);
+            this.testMetaContext.addTag(this.testTag);
         },
 
         //-------------------------------------------------------------------------------
@@ -95,12 +95,12 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            var annotationsByTypeList = this.testMetaContext.getAnnotationsByType(this.testAnnotationType);
-            test.assertTrue(annotationsByTypeList.contains(this.testAnnotation),
-                "Assert that annotationsTypeList returned the annotation")
-            var annotationsByReferenceList = this.testMetaContext.getAnnotationsByReference(this.testAnnotationReference);
-            test.assertTrue(annotationsByReferenceList.contains(this.testAnnotation),
-                "Assert that annotationsByReferenceList returned the annotation")
+            var tagsByTypeList = this.testMetaContext.getTagsByType(this.testTagType);
+            test.assertTrue(tagsByTypeList.contains(this.testTag),
+                "Assert that tagsTypeList returned the tag")
+            var tagsByReferenceList = this.testMetaContext.getTagsByReference(this.testTagReference);
+            test.assertTrue(tagsByReferenceList.contains(this.testTag),
+                "Assert that tagsByReferenceList returned the tag")
         }
     };
 
@@ -109,10 +109,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(metaContextInstantiationTest).with(
+    bugmeta.tag(metaContextInstantiationTest).with(
         test().name("MetaContext - instantiation Test")
     );
-    bugmeta.annotate(metaContextAddAnnotationTest).with(
-        test().name("MetaContext - #addAnnotation Test")
+    bugmeta.tag(metaContextAddTagTest).with(
+        test().name("MetaContext - #addTag Test")
     );
 });

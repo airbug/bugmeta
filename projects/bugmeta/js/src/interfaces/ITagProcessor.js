@@ -44,9 +44,9 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {Annotation} annotation
+         * @param {Tag} tag
          */
-        process: function(annotation) {}
+        process: function(tag) {}
     });
 
 

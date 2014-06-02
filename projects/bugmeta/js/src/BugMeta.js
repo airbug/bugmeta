@@ -14,9 +14,9 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Proxy')
-//@Require('bugmeta.Annotation')
-//@Require('bugmeta.AnnotationProcessor')
-//@Require('bugmeta.AnnotationScan')
+//@Require('bugmeta.Tag')
+//@Require('bugmeta.TagProcessor')
+//@Require('bugmeta.TagScan')
 //@Require('bugmeta.ITagProcessor')
 //@Require('bugmeta.MetaContext')
 
@@ -34,9 +34,9 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Obj                     = bugpack.require('Obj');
     var Proxy                   = bugpack.require('Proxy');
-    var Annotation              = bugpack.require('bugmeta.Annotation');
-    var AnnotationProcessor     = bugpack.require('bugmeta.AnnotationProcessor');
-    var AnnotationScan          = bugpack.require('bugmeta.AnnotationScan');
+    var Tag              = bugpack.require('bugmeta.Tag');
+    var TagProcessor     = bugpack.require('bugmeta.TagProcessor');
+    var TagScan          = bugpack.require('bugmeta.TagScan');
     var ITagProcessor           = bugpack.require('bugmeta.ITagProcessor');
     var MetaContext             = bugpack.require('bugmeta.MetaContext');
 
@@ -71,24 +71,24 @@ require('bugpack').context("*", function(bugpack) {
             //-------------------------------------------------------------------------------
 
             /**
-             * @type {function(new:Annotation)}
-             */
-            this.Annotation             = Annotation;
-
-            /**
-             * @type {function(new:AnnotationProcessor)}
-             */
-            this.AnnotationProcessor    = AnnotationProcessor;
-
-            /**
-             * @type {function(new:AnnotationScan)}
-             */
-            this.AnnotationScan         = AnnotationScan;
-
-            /**
              * @type {function(new:ITagProcessor)}
              */
             this.ITagProcessor          = ITagProcessor;
+
+            /**
+             * @type {function(new:Tag)}
+             */
+            this.Tag                    = Tag;
+
+            /**
+             * @type {function(new:TagProcessor)}
+             */
+            this.TagProcessor           = TagProcessor;
+
+            /**
+             * @type {function(new:TagScan)}
+             */
+            this.TagScan                = TagScan;
 
 
             //-------------------------------------------------------------------------------
@@ -108,14 +108,6 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {string} annotationType
-         * @return {Annotation}
-         */
-        annotation: function(annotationType) {
-            return new Annotation(annotationType);
-        },
-
-        /**
          * @return {MetaContext}
          */
         context: function() {
@@ -126,13 +118,21 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @param {string} annotationType
-         * @param {function(Annotation)} processorFunction
+         * @param {string} tagType
+         * @param {function(Tag)} processorFunction
          */
-        scanAllForTypeAndProcess: function(annotationType, processorFunction) {
-            var annotationProcessor = new AnnotationProcessor(processorFunction);
-            var annotationScan      = new AnnotationScan(this.context(), annotationProcessor, annotationType);
-            annotationScan.scanAll();
+        scanAllForTypeAndProcess: function(tagType, processorFunction) {
+            var tagProcessor = new TagProcessor(processorFunction);
+            var tagScan      = new TagScan(this.context(), tagProcessor, tagType);
+            tagScan.scanAll();
+        },
+
+        /**
+         * @param {string} tagType
+         * @return {Tag}
+         */
+        tag: function(tagType) {
+            return new Tag(tagType);
         }
     });
 
@@ -169,9 +169,9 @@ require('bugpack').context("*", function(bugpack) {
     // Static Proxy
     //-------------------------------------------------------------------------------
 
-    Proxy.proxy(BugMeta, Proxy.method(BugMeta.getInstance), [
-        "annotation",
-        "context"
+    Proxy.proxy(BugMeta, Proxy.method(BugMeta.getInstance), [,
+        "context",
+        "tag"
     ]);
 
 

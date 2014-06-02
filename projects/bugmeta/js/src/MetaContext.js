@@ -15,8 +15,8 @@
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
-//@Require('bugmeta.AnnotationProcessor')
-//@Require('bugmeta.MetaDecorator')
+//@Require('bugmeta.TagProcessor')
+//@Require('bugmeta.MetaTagger')
 
 
 //-------------------------------------------------------------------------------
@@ -33,8 +33,8 @@ require('bugpack').context("*", function(bugpack) {
     var List                    = bugpack.require('List');
     var Map                     = bugpack.require('Map');
     var Obj                     = bugpack.require('Obj');
-    var AnnotationProcessor     = bugpack.require('bugmeta.AnnotationProcessor');
-    var MetaDecorator           = bugpack.require('bugmeta.MetaDecorator');
+    var TagProcessor     = bugpack.require('bugmeta.TagProcessor');
+    var MetaTagger           = bugpack.require('bugmeta.MetaTagger');
 
 
     //-------------------------------------------------------------------------------
@@ -68,21 +68,21 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {Map.<string, List.<Annotation>>}
+             * @type {Map.<string, List.<Tag>>}
              */
-            this.annotationMap                  = new Map();
+            this.tagMap                  = new Map();
 
             /**
              * @private
-             * @type {Map.<string, List.<AnnotationProcessor>>}
+             * @type {Map.<string, List.<TagProcessor>>}
              */
-            this.annotationProcessorMap         = new Map();
+            this.tagProcessorMap         = new Map();
 
             /**
              * @private
-             * @type {Map.<*, List.<Annotation>>}
+             * @type {Map.<*, List.<Tag>>}
              */
-            this.referenceToAnnotationListMap   = new Map();
+            this.referenceToTagListMap   = new Map();
         },
 
 
@@ -91,24 +91,24 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {Map.<string, List.<Annotation>>}
+         * @return {Map.<string, List.<Tag>>}
          */
-        getAnnotationMap: function() {
-            return this.annotationMap;
+        getTagMap: function() {
+            return this.tagMap;
         },
 
         /**
-         * @return {Map.<string, List.<AnnotationProcessor>>}
+         * @return {Map.<string, List.<TagProcessor>>}
          */
-        getAnnotationProcessorMap: function() {
-            return this.annotationProcessorMap;
+        getTagProcessorMap: function() {
+            return this.tagProcessorMap;
         },
 
         /**
-         * @return {Map.<*, List.<Annotation>>}
+         * @return {Map.<*, List.<Tag>>}
          */
-        getReferenceToAnnotationListMap: function() {
-            return this.referenceToAnnotationListMap;
+        getReferenceToTagListMap: function() {
+            return this.referenceToTagListMap;
         },
 
         //-------------------------------------------------------------------------------
@@ -116,73 +116,73 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {*} reference
-         * @return {MetaDecorator}
+         * @param {Tag} tag
          */
-        annotate: function(reference) {
-            return new MetaDecorator(reference, this);
-        },
-
-        /**
-         * @param {Annotation} annotation
-         */
-        addAnnotation: function(annotation) {
-            var annotationTypeList = this.annotationMap.get(annotation.getAnnotationType());
-            if (!annotationTypeList) {
-                annotationTypeList = new List();
-                this.annotationMap.put(annotation.getAnnotationType(), annotationTypeList);
+        addTag: function(tag) {
+            var tagTypeList = this.tagMap.get(tag.getTagType());
+            if (!tagTypeList) {
+                tagTypeList = new List();
+                this.tagMap.put(tag.getTagType(), tagTypeList);
             }
-            annotationTypeList.add(annotation);
-            var annotationReferenceList = this.referenceToAnnotationListMap.get(annotation.getAnnotationReference());
-            if (!annotationReferenceList) {
-                annotationReferenceList = new List();
-                this.referenceToAnnotationListMap.put(annotation.getAnnotationReference(), annotationReferenceList);
+            tagTypeList.add(tag);
+            var tagReferenceList = this.referenceToTagListMap.get(tag.getTagReference());
+            if (!tagReferenceList) {
+                tagReferenceList = new List();
+                this.referenceToTagListMap.put(tag.getTagReference(), tagReferenceList);
             }
-            annotationReferenceList.add(annotation);
-            this.processAnnotation(annotation);
+            tagReferenceList.add(tag);
+            this.processTag(tag);
         },
 
         /**
          * @param {*} reference
-         * @return {List.<Annotation>}
+         * @return {List.<Tag>}
          */
-        getAnnotationsByReference: function(reference) {
-            return this.referenceToAnnotationListMap.get(reference);
+        getTagsByReference: function(reference) {
+            return this.referenceToTagListMap.get(reference);
         },
 
         /**
-         * @param {string} annotationType
-         * @return {List.<Annotation>}
+         * @param {string} tagType
+         * @return {List.<Tag>}
          */
-        getAnnotationsByType: function(annotationType) {
+        getTagsByType: function(tagType) {
             //TODO BRN (QUESTION): Should we clone this list to prevent breakage?
-            return this.annotationMap.get(annotationType);
+            return this.tagMap.get(tagType);
         },
 
         /**
-         * @param {Annotation} annotation
+         * @param {Tag} tag
          */
-        processAnnotation: function(annotation) {
-            var annotationProcessorTypeList = this.annotationProcessorMap.get(annotation.getAnnotationType());
-            if (annotationProcessorTypeList) {
-                annotationProcessorTypeList.forEach(function(annotationProcessor) {
-                    annotationProcessor.process(annotation);
+        processTag: function(tag) {
+            var tagProcessorTypeList = this.tagProcessorMap.get(tag.getTagType());
+            if (tagProcessorTypeList) {
+                tagProcessorTypeList.forEach(function(tagProcessor) {
+                    tagProcessor.process(tag);
                 });
             }
         },
 
         /**
-         * @param {string} annotationType
-         * @param {function(Annotation)} annotationProcessorFunction
+         * @param {string} tagType
+         * @param {function(Tag)} tagProcessorFunction
          */
-        registerAnnotationProcessor: function(annotationType, annotationProcessorFunction) {
-            var annotationProcessorTypeList = this.annotationProcessorMap.get(annotationType);
-            if (!annotationProcessorTypeList) {
-                annotationProcessorTypeList = new List();
-                this.annotationProcessorMap.put(annotationType, annotationProcessorTypeList);
+        registerTagProcessor: function(tagType, tagProcessorFunction) {
+            var tagProcessorTypeList = this.tagProcessorMap.get(tagType);
+            if (!tagProcessorTypeList) {
+                tagProcessorTypeList = new List();
+                this.tagProcessorMap.put(tagType, tagProcessorTypeList);
             }
-            var annotationProcessor = new AnnotationProcessor(annotationProcessorFunction);
-            annotationProcessorTypeList.add(annotationProcessor);
+            var tagProcessor = new TagProcessor(tagProcessorFunction);
+            tagProcessorTypeList.add(tagProcessor);
+        },
+
+        /**
+         * @param {*} reference
+         * @return {MetaTagger}
+         */
+        tag: function(reference) {
+            return new MetaTagger(reference, this);
         }
     });
 
