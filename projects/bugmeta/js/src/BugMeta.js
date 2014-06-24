@@ -17,8 +17,9 @@
 //@Require('bugmeta.ITagProcessor')
 //@Require('bugmeta.MetaContext')
 //@Require('bugmeta.Tag')
+//@Require('bugmeta.TagClassTagScan')
+//@Require('bugmeta.TagNameTagScan')
 //@Require('bugmeta.TagProcessor')
-//@Require('bugmeta.TagScan')
 
 
 //-------------------------------------------------------------------------------
@@ -31,14 +32,15 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var Obj             = bugpack.require('Obj');
-    var Proxy           = bugpack.require('Proxy');
-    var ITagProcessor   = bugpack.require('bugmeta.ITagProcessor');
-    var MetaContext     = bugpack.require('bugmeta.MetaContext');
-    var Tag             = bugpack.require('bugmeta.Tag');
-    var TagProcessor    = bugpack.require('bugmeta.TagProcessor');
-    var TagScan         = bugpack.require('bugmeta.TagScan');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var Proxy               = bugpack.require('Proxy');
+    var ITagProcessor       = bugpack.require('bugmeta.ITagProcessor');
+    var MetaContext         = bugpack.require('bugmeta.MetaContext');
+    var Tag                 = bugpack.require('bugmeta.Tag');
+    var TagClassTagScan     = bugpack.require('bugmeta.TagClassTagScan');
+    var TagNameTagScan      = bugpack.require('bugmeta.TagNameTagScan');
+    var TagProcessor        = bugpack.require('bugmeta.TagProcessor');
 
 
     //-------------------------------------------------------------------------------
@@ -86,9 +88,14 @@ require('bugpack').context("*", function(bugpack) {
             this.TagProcessor           = TagProcessor;
 
             /**
-             * @type {function(new:TagScan)}
+             * @type {function(new:TagClassTagScan)}
              */
-            this.TagScan                = TagScan;
+            this.TagClassTagScan        = TagClassTagScan;
+
+            /**
+             * @type {function(new:TagNameTagScan)}
+             */
+            this.TagNameTagScan         = TagNameTagScan;
 
 
             //-------------------------------------------------------------------------------
@@ -118,21 +125,21 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @param {string} tagType
+         * @param {string} tagName
          * @param {function(Tag)} processorFunction
          */
-        scanAllForTypeAndProcess: function(tagType, processorFunction) {
+        processByName: function(tagName, processorFunction) {
             var tagProcessor = new TagProcessor(processorFunction);
-            var tagScan      = new TagScan(this.context(), tagProcessor, tagType);
+            var tagScan      = new TagNameTagScan(this.context(), tagProcessor, tagName);
             tagScan.scanAll();
         },
 
         /**
-         * @param {string} tagType
+         * @param {string} tagName
          * @return {Tag}
          */
-        tag: function(tagType) {
-            return new Tag(tagType);
+        tag: function(tagName) {
+            return new Tag(tagName);
         }
     });
 

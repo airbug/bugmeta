@@ -9,12 +9,11 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugmeta.TagScan')
+//@Export('bugmeta.TagClassTagScan')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('Set')
-//@Require('TypeUtil')
+//@Require('List')
+//@Require('bugmeta.TagScan')
 
 
 //-------------------------------------------------------------------------------
@@ -28,9 +27,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class       = bugpack.require('Class');
-    var Obj         = bugpack.require('Obj');
-    var Set         = bugpack.require('Set');
-    var TypeUtil    = bugpack.require('TypeUtil');
+    var List        = bugpack.require('List');
+    var TagScan     = bugpack.require('bugmeta.TagScan');
 
 
     //-------------------------------------------------------------------------------
@@ -39,11 +37,11 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {Obj}
+     * @extends {TagScan}
      */
-    var TagScan = Class.extend(Obj, {
+    var TagClassTagScan = Class.extend(TagScan, {
 
-        _name: "bugmeta.TagScan",
+        _name: "bugmeta.TagClassTagScan",
 
 
         //-------------------------------------------------------------------------------
@@ -54,11 +52,11 @@ require('bugpack').context("*", function(bugpack) {
          * @constructs
          * @param {MetaContext} metaContext
          * @param {ITagProcessor} tagProcessor
-         * @param {string} forType
+         * @param {Class} tagClass
          */
-        _constructor: function(metaContext, tagProcessor, forType) {
+        _constructor: function(metaContext, tagProcessor, tagClass) {
 
-            this._super();
+            this._super(metaContext, tagProcessor);
 
 
             //-------------------------------------------------------------------------------
@@ -67,21 +65,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {string}
+             * @type {Class}
              */
-            this.forType        = forType;
-
-            /**
-             * @private
-             * @type {MetaContext}
-             */
-            this.metaContext    = metaContext;
-
-            /**
-             * @private
-             * @type {ITagProcessor}
-             */
-            this.tagProcessor   = tagProcessor;
+            this.tagClass       = tagClass;
         },
 
 
@@ -90,24 +76,10 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {string}
+         * @return {Class}
          */
-        getForType: function() {
-            return this.forType;
-        },
-
-        /**
-         * @return {MetaContext}
-         */
-        getMetaContext: function() {
-            return this.metaContext;
-        },
-
-        /**
-         * @return {ITagProcessor}
-         */
-        getTagProcessor: function() {
-            return this.tagProcessor;
+        getTagClass: function() {
+            return this.tagClass;
         },
 
 
@@ -121,67 +93,64 @@ require('bugpack').context("*", function(bugpack) {
          * }=} scanOptions
          */
         scanAll: function(scanOptions) {
+            var tags = this.getMetaContext().getTagsByClass(this.tagClass);
+            this.processTags(tags, scanOptions);
+        },
+
+        /**
+         * @param {Constructor} constructor
+         * @param {{
+         *      excludes: Array.<string>
+         * }=} scanOptions
+         */
+        scanConstructor: function(constructor, scanOptions) {
             var _this           = this;
-            var excludeSet      = new Set();
-            var tags     = this.metaContext.getTagsByType(this.forType);
-            if (scanOptions && scanOptions.excludes) {
-                scanOptions.excludes.forEach(function(exclude) {
-                    if (TypeUtil.isString(exclude)) {
-                        excludeSet.add(bugpack.require(exclude));
-                    } else {
-                        excludeSet.add(exclude);
+            var constructorTags = this.getMetaContext().getTagsByReference(constructor);
+            var tags            = new List();
+            if (constructorTags) {
+                constructorTags.forEach(function(tag) {
+                    if (Class.doesExtend(tag, _this.tagClass.getConstructor())) {
+                        tags.add(tag);
                     }
                 });
-            }
-            if (tags) {
-                tags.forEach(function(tag) {
-                    if (!excludeSet.contains(tag.getTagReference())) {
-                        _this.tagProcessor.process(tag);
-                    }
-                });
+                this.processTags(tags, scanOptions);
             }
         },
 
         /**
-         * @param {Class} _class
+         * @param {Array.<Constructor>} constructors
+         * @param {{
+         *      excludes: Array.<string>
+         * }=} scanOptions
          */
-        scanClass: function(_class) {
-            var _this       = this;
-            var tags = this.metaContext.getTagsByReference(_class);
-            if (tags) {
-                tags.forEach(function(tag) {
-                    if (tag.getTagType() === _this.forType) {
-                        _this.tagProcessor.process(tag);
-                    }
-                });
-            }
-        },
-
-        /**
-         * @param {Array.<Class>} _classes
-         */
-        scanClasses: function(_classes) {
+        scanConstructors: function(constructors, scanOptions) {
             var _this = this;
-            _classes.forEach(function(_class) {
-                _this.scanClass(_class);
+            constructors.forEach(function(constructors) {
+                _this.scanConstructor(constructors, scanOptions);
             });
         },
 
         /**
          * @param {string} bugpackKey
+         * @param {{
+         *      excludes: Array.<string>
+         * }=} scanOptions
          */
-        scanBugpack: function(bugpackKey) {
-            var _class = bugpack.require(bugpackKey);
-            this.scanClass(_class);
+        scanBugpack: function(bugpackKey, scanOptions) {
+            var constructor = bugpack.require(bugpackKey);
+            this.scanConstructor(constructor, scanOptions);
         },
 
         /**
          * @param {Array.<string>} bugpackKeys
+         * @param {{
+         *      excludes: Array.<string>
+         * }=} scanOptions
          */
-        scanBugpacks: function(bugpackKeys) {
+        scanBugpacks: function(bugpackKeys, scanOptions) {
             var _this = this;
             bugpackKeys.forEach(function(bugpackKey) {
-                _this.scanBugpack(bugpackKey);
+                _this.scanBugpack(bugpackKey, scanOptions);
             });
         }
     });
@@ -191,5 +160,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('bugmeta.TagScan', TagScan);
+    bugpack.export('bugmeta.TagClassTagScan', TagClassTagScan);
 });

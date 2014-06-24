@@ -48,9 +48,9 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {string} tagType
+         * @param {string} tagName
          */
-        _constructor: function(tagType) {
+        _constructor: function(tagName) {
 
             this._super();
 
@@ -61,21 +61,28 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {*}
+             * @type {string}
              */
-            this.tagReference    = null;
+            this.tagName        = tagName || "";
 
             /**
              * @private
-             * @type {string}
+             * @type {*}
              */
-            this.tagType         = tagType;
+            this.tagReference   = null;
         },
 
 
         //-------------------------------------------------------------------------------
         // Getters and Setters
         //-------------------------------------------------------------------------------
+
+        /**
+         * @return {string}
+         */
+        getTagName: function() {
+            return this.tagName;
+        },
 
         /**
          * @return {*}
@@ -89,13 +96,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         setTagReference: function(tagReference) {
             this.tagReference = tagReference;
-        },
-
-        /**
-         * @return {string}
-         */
-        getTagType: function() {
-            return this.tagType;
         }
     });
 
@@ -106,11 +106,11 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @static
-     * @param {string} tagType
+     * @param {string} tagName
      * @return {Tag}
      */
-    Tag.tag = function(tagType) {
-        return new Tag(tagType);
+    Tag.tag = function(tagName) {
+        return new Tag(tagName);
     };
 
 
