@@ -43,9 +43,9 @@ var nodejs              = enableModule('nodejs');
 //-------------------------------------------------------------------------------
 
 var name                = "bugmeta";
-var version             = "0.1.2";
+var version             = "0.1.3";
 var dependencies        = {
-    bugpack: "0.1.11"
+    bugpack: "0.1.12"
 };
 
 
@@ -97,6 +97,7 @@ buildProperties({
             sourcePaths: [
                 "../buganno/projects/buganno/js/src",
                 "../bugfs/projects/bugfs/js/src",
+                "../bugjs/projects/bugyarn/js/src",
                 "../bugunit/projects/bugdouble/js/src",
                 "../bugunit/projects/bugunit/js/src"
             ],
