@@ -43,9 +43,9 @@ var nodejs              = enableModule('nodejs');
 //-------------------------------------------------------------------------------
 
 var name                = "bugmeta";
-var version             = "0.1.3";
+var version             = "0.1.4";
 var dependencies        = {
-    bugpack: "0.1.12"
+    bugpack: "0.1.14"
 };
 
 
@@ -148,6 +148,7 @@ buildTarget('local').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "cleanupExtraSpacingAtEndOfLines",
                     "ensureNewLineEnding",
                     "updateCopyright",
                     "orderBugpackRequires",
@@ -233,6 +234,7 @@ buildTarget('prod').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "cleanupExtraSpacingAtEndOfLines",
                     "ensureNewLineEnding",
                     "updateCopyright",
                     "orderBugpackRequires",
