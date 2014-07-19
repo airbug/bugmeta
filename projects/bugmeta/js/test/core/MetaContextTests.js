@@ -17,6 +17,7 @@
 //@Require('bugmeta.MetaContext')
 //@Require('bugmeta.Tag')
 //@Require('bugunit.TestTag')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -35,6 +36,7 @@ require('bugpack').context("*", function(bugpack) {
     var MetaContext     = bugpack.require('bugmeta.MetaContext');
     var Tag             = bugpack.require('bugmeta.Tag');
     var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
@@ -42,7 +44,19 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
     var test            = TestTag.test;
+
+
+    //-------------------------------------------------------------------------------
+    // BugYarn
+    //-------------------------------------------------------------------------------
+
+    bugyarn.registerWinder("setupTestMetaContext", function(yarn) {
+        yarn.wind({
+            metaContext: new MetaContext()
+        });
+    });
 
 
     //-------------------------------------------------------------------------------
