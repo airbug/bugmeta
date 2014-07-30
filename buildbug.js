@@ -77,7 +77,7 @@ buildProperties({
             ]
         },
         sourcePaths: [
-            "../bugcore/projects/bugcore/js/src",
+            "../bugcore/libraries/bugcore/js/src",
             "./projects/bugmeta/js/src"
         ],
         scriptPaths: [
@@ -97,16 +97,16 @@ buildProperties({
             sourcePaths: [
                 "../buganno/projects/buganno/js/src",
                 "../bugfs/projects/bugfs/js/src",
-                "../bugjs/projects/bugyarn/js/src",
                 "../bugunit/projects/bugdouble/js/src",
-                "../bugunit/projects/bugunit/js/src"
+                "../bugunit/projects/bugunit/js/src",
+                "../bugyarn/libraries/bugyarn/js/src"
             ],
             scriptPaths: [
                 "../buganno/projects/buganno/js/scripts",
                 "../bugunit/projects/bugunit/js/scripts"
             ],
             testPaths: [
-                "../bugcore/projects/bugcore/js/test",
+                "../bugcore/libraries/bugcore/js/test",
                 "./projects/bugmeta/js/test"
             ]
         }
