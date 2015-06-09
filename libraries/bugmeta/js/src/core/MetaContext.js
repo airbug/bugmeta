@@ -147,7 +147,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {function(Tag):boolean} filterMethod
-         * @returns {List.<Tag>}
+         * @return {List.<Tag>}
          */
         filterTags: function(filterMethod) {
             return /** @type {List.<Tag>} */this.tagList
